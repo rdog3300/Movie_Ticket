@@ -57,7 +57,7 @@ public class ScreeningRoom
      * Returns the current occupancy
      * @return The current occupancy
      */
-    public int getCurrent_occupancy(){return this.getCurrent_occupancy();}
+    public int getCurrent_occupancy(){return this.current_occupancy;}
 
     /**
      * Returns the name of the movie shown
@@ -81,7 +81,7 @@ public class ScreeningRoom
      * Removes customers from the screening room
      * @param T The customer to be removed
      */
-    public void remove_Customer(Customer T)
+    public void remove_Ticket(Ticket T)
     {
         Tickets.remove(T);
         current_occupancy --;
@@ -122,9 +122,7 @@ public class ScreeningRoom
     @Override
     public String toString()
     {
-        String return_String;
-        return_String = String.format("ScreeningRoom\nMovie:\t%s\tMAX:\t%d\tCURRENT\t%d", getMovie_shown(),getMAX_OCCUPANCY(),getCurrent_occupancy());
-        return return_String;
+        return String.format("ScreeningRoom\nMovie:\t%s\tMAX:\t%d\tCURRENT\t%d\n", getMovie_shown(),getMAX_OCCUPANCY(),getCurrent_occupancy());
     }
 
 }
