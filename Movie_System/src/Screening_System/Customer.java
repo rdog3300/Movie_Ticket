@@ -58,7 +58,7 @@ public class Customer {
     {
         if(getAge() >= 59)
             this.AgeGroup = Age_Groups.SENIOR;
-        else if(getAge() >= 18)
+        else if(getAge() >= 17)
             this.AgeGroup = Age_Groups.ADULT;
         else if(getAge() >= 13)
             this.AgeGroup = Age_Groups.TEEN;
@@ -87,12 +87,22 @@ public class Customer {
     public int getAge(){return this.age;}
 
     /**
-     * Returns the age group of the customer
+     * Returns the customer's ticket
+     * @return The customer's ticket
+     */
+    public Ticket getTicket(){return this.ticket;}
+
+    /**
+     * Returns The age group of the customer
      * @return The age group of the customer
      */
     public String getAgeGroup(){return this.AgeGroup.toString();}
 
-
+    /**
+     * Returns the object of the customer's age group
+     * @return The object of the customer's age group
+     */
+    public Age_Groups getAgeGroup_object(){return this.AgeGroup;}
 
 }
 
@@ -118,7 +128,7 @@ enum Age_Groups
     {
         if(this.min == 59)
             this.price = 4.00;//set senior price
-        else if(this.min == 18)
+        else if(this.min == 17)
             this.price = 7.00;//set adult price
         else if(this.min == 13)
             this.price = 5.00;
