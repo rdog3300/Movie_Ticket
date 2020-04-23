@@ -1,16 +1,19 @@
 package Screening_System;
 
+import java.io.Serializable;
+
 /**
  * Ticket Class
  * Holds information about each movie theater ticket
  * @author Ryan Kruszewski
  */
-public class Ticket
+public class Ticket implements Serializable
 {
     /*ATTRIBUTES*/
     private double price;
     private Age_Groups type;
     private String movie_name;
+
 
     /**
      * Default Constructor
@@ -18,19 +21,19 @@ public class Ticket
     public Ticket()
     {
         setMovie_name("N/A");
+        setType(0);
         setPrice(0.00);
-        setType(Age_Groups.CHILD);
     }
 
     /**
      * Overloaded Constructor
      * @param movie_name The name of the movie
-     * @param type The age group of the ticket
+     * @param age The age of the ticket customer
      */
-    public Ticket(String movie_name, Age_Groups type)
+    public Ticket(String movie_name, int age)
     {
         setMovie_name(movie_name);
-        setType(type);
+        setType(age);
     }
     //setters
 
@@ -48,12 +51,20 @@ public class Ticket
 
     /**
      * Sets the type of the ticket
-     * @param type The type of the ticket
+     * @param age The age of the customer
      */
-    private void setType(Age_Groups type)
+    private void setType(int age)
     {
-        this.type = type;
-        setPrice(type.price);
+       if(age >= Age_Groups.SENIOR.min)
+           this.type = Age_Groups.SENIOR;
+       else if(age >= Age_Groups.ADULT.min)
+           this.type = Age_Groups.ADULT;
+       else if(age >= Age_Groups.TEEN.min)
+            this.type = Age_Groups.TEEN;
+       else
+           this.type = Age_Groups.CHILD;
+
+       setPrice(this.type.price);
     }
 
     /**
@@ -81,6 +92,42 @@ public class Ticket
     @Override
     public String toString()
     {
-        return String.format("Ticket\nMovie:\t%s\tPrice:\t$%.2f\tType:\t%s\n",getMovie_name(),getPrice(),getType());
+        return String.format("Ticket\n\tMovie:\t%s\tPrice:\t$%.2f\tType:\t%s\n",getMovie_name(),getPrice(),getType());
+    }
+}
+
+enum Age_Groups
+{
+
+    SENIOR(59,150),
+    ADULT(17,58),
+    TEEN(13,16),
+    CHILD(0,12);
+
+    int max,min;
+    double price;
+
+    Age_Groups(int min, int max)
+    {
+        this.min = min;
+        this.max = max;
+        setPrice();
+    }
+
+    private void setPrice()
+    {
+        if(this.min == 59)
+            this.price = 4.00;//set senior price
+        else if(this.min == 17)
+            this.price = 7.00;//set adult price
+        else if(this.min == 13)
+            this.price = 5.00;
+        else
+            this.price = 2.50;
+    }
+
+    public String toString()
+    {
+        return this.name();
     }
 }
