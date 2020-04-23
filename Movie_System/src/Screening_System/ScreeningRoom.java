@@ -1,17 +1,19 @@
 package Screening_System;
+import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 /**
  * ScreeningRoom Class
  * Holds information about each movie theater screening room
  * @author Ryan Kruszewski
  */
-public class ScreeningRoom
+public class ScreeningRoom implements Serializable
 {
     /*ATTRIBUTES*/
     private String movie_shown;
     private final int MAX_OCCUPANCY;
     private int current_occupancy;
-    private ArrayList<Ticket> Tickets = new ArrayList<>(); //maybe??
+    ArrayList<Ticket> Tickets = new ArrayList<>(); //maybe??
 
     /*CONSTRUCTORS*/
 
@@ -20,7 +22,7 @@ public class ScreeningRoom
      */
     public ScreeningRoom() {
         MAX_OCCUPANCY = 10;
-        this.current_occupancy = 0;
+        setCurrent_occupancy(0);
         setMovie_shown("N/A");
     }
 
@@ -32,7 +34,7 @@ public class ScreeningRoom
     public ScreeningRoom(int MAX, String movie_shown)
     {
         MAX_OCCUPANCY = MAX;
-        this.current_occupancy = 0;
+        setCurrent_occupancy(0);
         setMovie_shown(movie_shown);
     }
 
@@ -44,6 +46,12 @@ public class ScreeningRoom
      * @param movie_shown The movie shown
      */
     public void setMovie_shown(String movie_shown) {this.movie_shown = movie_shown;}
+
+    /**
+     * Sets the current occupancy
+     * @param current The current occupancy
+     */
+    private void setCurrent_occupancy(int current){this.current_occupancy = current;}
 
     //getters
 
@@ -74,7 +82,17 @@ public class ScreeningRoom
     public void add_Ticket(Ticket T)
     {
         Tickets.add(T);
-        current_occupancy++;
+        setCurrent_occupancy(getCurrent_occupancy() + 1);
+    }
+
+    /**
+     * Adds tickets from an order
+     * @param O The order of tickets
+     */
+    public void add_Ticket(Order O)
+    {
+        for(Ticket T : O.Tickets)
+            add_Ticket(T);
     }
 
     /**
@@ -84,7 +102,35 @@ public class ScreeningRoom
     public void remove_Ticket(Ticket T)
     {
         Tickets.remove(T);
-        current_occupancy --;
+        setCurrent_occupancy(getCurrent_occupancy() - 1);
+    }
+
+    /**
+     * Removes tickets using an order
+     * @param O The order of tickets
+     */
+    public void remove_Ticket(Order O)
+    {
+        for(Ticket T: O.Tickets)
+            remove_Ticket(T);
+    }
+
+    /**
+     * Returns true if a ticket order is contained in screening room
+     * @param O The order of tickets
+     * @return If the ticket order is contained in screening room
+     */
+    public boolean Contains_Tickets(Order O)
+    {
+        boolean contains = true;
+        for(Ticket T : O.Tickets)
+        {
+            if(!this.Tickets.contains(T))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -116,6 +162,18 @@ public class ScreeningRoom
     }
 
     /**
+     * Returns if a number of tickets can be added
+     * @param number The number of tickets
+     * @return If a number of tickets can be added
+     */
+    public boolean canAdd_Ticket(int number)
+    {
+        if(getMAX_OCCUPANCY() >= current_occupancy + number)
+            return true;
+        else return false;
+    }
+
+    /**
      * Returns a string version of screening room
      * @return A string version of screening room
      */
@@ -124,5 +182,4 @@ public class ScreeningRoom
     {
         return String.format("ScreeningRoom\nMovie:\t%s\tMAX:\t%d\tCURRENT\t%d\n", getMovie_shown(),getMAX_OCCUPANCY(),getCurrent_occupancy());
     }
-
 }
