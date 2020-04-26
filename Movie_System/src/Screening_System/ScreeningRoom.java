@@ -182,4 +182,5 @@ public class ScreeningRoom implements Serializable
     {
         return String.format("ScreeningRoom\nMovie:\t%s\tMAX:\t%d\tCURRENT\t%d\n", getMovie_shown(),getMAX_OCCUPANCY(),getCurrent_occupancy());
     }
+
 }
