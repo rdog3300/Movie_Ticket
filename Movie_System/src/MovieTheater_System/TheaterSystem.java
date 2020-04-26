@@ -1,160 +1,185 @@
-package MovieTheater_System;
-
-import Screening_System.*;
-import File_IO.*;
-
+package Screening_System;
 import java.io.Serializable;
 import java.util.ArrayList;
-//import Concessions.*;
-
-
 /**
- * TheaterSystem Class
- * Holds functions and data for the movie theater
- * @author Ryan Kruszeski
- * @author Ryan Beveridge
+ * ScreeningRoom Class
+ * Holds information about each movie theater screening room
+ * @author Ryan Kruszewski
  */
-public class TheaterSystem implements Serializable {
+public class ScreeningRoom implements Serializable
+{
     /*ATTRIBUTES*/
-    ArrayList<ScreeningRoom> ScreeningRooms = new ArrayList<>();
-    ArrayList<Order> Orders = new ArrayList<>();
-    static WriteFile writeFile = new WriteFile();
-    static ReadFile  readFile = new ReadFile();
-    double totalSales;
+    private String movie_shown;
+    private final int MAX_OCCUPANCY;
+    private int current_occupancy;
+    ArrayList<Ticket> Tickets = new ArrayList<>(); //maybe??
 
-    /*Constructors*/
+    /*CONSTRUCTORS*/
+
+    /**
+     * Default Constructor
+     */
+    public ScreeningRoom() {
+        MAX_OCCUPANCY = 10;
+        setCurrent_occupancy(0);
+        setMovie_shown("N/A");
+    }
+
+    /**
+     * Overloaded Constructor
+     * @param MAX The maximum occupancy
+     * @param movie_shown the name of the movie being shown
+     */
+    public ScreeningRoom(int MAX, String movie_shown)
+    {
+        MAX_OCCUPANCY = MAX;
+        setCurrent_occupancy(0);
+        setMovie_shown(movie_shown);
+    }
+
     /*METHODS*/
+    //setters
 
     /**
-     * Adds a screening room to the list of screening rooms
-     * @param S
+     * Sets the name of the movie shown
+     * @param movie_shown The movie shown
      */
-    public void add_ScreeningRoom(ScreeningRoom S) { ScreeningRooms.add(S); }
+    public void setMovie_shown(String movie_shown) {this.movie_shown = movie_shown;}
 
     /**
-     * Adds an order to the list of orders
-     * @param O
+     * Sets the current occupancy
+     * @param current The current occupancy
      */
-    public void add_Order(Order O) { Orders.add(O); }
+    private void setCurrent_occupancy(int current){this.current_occupancy = current;}
+
+    //getters
 
     /**
-     * Removes a screening room from the list of screening rooms
-     * @param S
+     * Returns the max occupancy
+     * @return The max occupancy
      */
-    public void remove_ScreeningRoom(ScreeningRoom S) { ScreeningRooms.remove(S); }
+    public int getMAX_OCCUPANCY() {return this.MAX_OCCUPANCY;}
 
     /**
-     * Removes an order from the list of orders
-     * @param O The order to be removed
+     * Returns the current occupancy
+     * @return The current occupancy
      */
-    public void remove_Order(Order O)
+    public int getCurrent_occupancy(){return this.current_occupancy;}
+
+    /**
+     * Returns the name of the movie shown
+     * @return The name of the movie shown
+     */
+    public String getMovie_shown (){return this.movie_shown;}
+
+    //Other functions
+
+    /**
+     * Adds customer to the screening room
+     * @param T The customer to be added
+     */
+    public void add_Ticket(Ticket T)
     {
-        for(ScreeningRoom S : ScreeningRooms)
-        {
-            if(S.Contains_Tickets(O))
-                S.remove_Ticket(O);
-        }
-        Orders.remove(O);
-        for(int i = 0; i < Orders.size(); i++)
-        {
-            Orders.get(i).setOrderName("Order_" + i + 1);
-        }
-        Order.NumOrders = Orders.size();
+        Tickets.add(T);
+        setCurrent_occupancy(getCurrent_occupancy() + 1);
     }
 
     /**
-     * Returns a screening room from a certain index
-     * @param index The index of the screening room
-     * @return A screening room from an index
+     * Adds tickets from an order
+     * @param O The order of tickets
      */
-    public ScreeningRoom get_ScreeningRoom(int index) {return this.ScreeningRooms.get(index);}
-
-    /**
-     * Returns the order from a certain index
-     * @param index The index of the order
-     * @return An order from an index
-     */
-    public Order getOrder(int index) { return this.Orders.get(index);}
-
-    /**
-     * Returns an order based on the order name
-     * @param order The name of the order
-     * @return The order named
-     */
-    public Order getOrder(String order)
+    public void add_Ticket(Order O)
     {
-        for(Order O : Orders)
+        for(Ticket T : O.Tickets)
+            add_Ticket(T);
+    }
+
+    /**
+     * Removes customers from the screening room
+     * @param T The customer to be removed
+     */
+    public void remove_Ticket(Ticket T)
+    {
+        Tickets.remove(T);
+        setCurrent_occupancy(getCurrent_occupancy() - 1);
+    }
+
+    /**
+     * Removes tickets using an order
+     * @param O The order of tickets
+     */
+    public void remove_Ticket(Order O)
+    {
+        for(Ticket T: O.Tickets)
+            remove_Ticket(T);
+    }
+
+    /**
+     * Returns true if a ticket order is contained in screening room
+     * @param O The order of tickets
+     * @return If the ticket order is contained in screening room
+     */
+    public boolean Contains_Tickets(Order O)
+    {
+        boolean contains = true;
+        for(Ticket T : O.Tickets)
         {
-            if(O.getOrderName().equals(order))
-                return O;
+            if(!this.Tickets.contains(T))
+            {
+                return false;
+            }
         }
-            return null;
+        return true;
     }
 
     /**
-     * Returns the number of screening rooms
-     * @return The number of screening rooms
+     * Checks if the screening room is full
+     * @return If the screening room is full
      */
-    public int get_ScreeningRoom_Size(){return this.ScreeningRooms.size();}
-
-    /**
-     * Returns the number of orders
-     * @return The number of orders
-     */
-    public int get_Order_Size(){return this.Orders.size();}
-
-
-    public boolean Orders_empty(){return this.Orders.isEmpty();}
-    public boolean Screens_empty(){return this.ScreeningRooms.isEmpty();}
-    /**
-     * Returns a string of movie titles
-     * @return A string of movie titles
-     */
-    public String getMovies()
+    public boolean isFull()
     {
-        String return_String = "MOVIES:\n";
-        for(int i = 0; i < ScreeningRooms.size(); i++)
+        if(getCurrent_occupancy() > getMAX_OCCUPANCY())
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * Adds a ticket if screening room is not full
+     * @param T The ticket to be added
+     * @return If the ticket can be added
+     */
+    public boolean canAdd_Ticket(Ticket T)
+    {
+        if(!isFull())
         {
-            if (!ScreeningRooms.get(i).isFull())
-                return_String += i+1 + ". " + ScreeningRooms.get(i).getMovie_shown() + "\n";
+            add_Ticket(T);
+            return true;
         }
-        return return_String;
-    }
-
-    public void printOrders()
-    {
-        for(int i = 0; i < Orders.size(); i++)
-            System.out.println(Orders.get(i));
+        else
+            return false;
     }
 
     /**
-     * Returns a String version of the theater system
-     * @return A string version of the theater system
+     * Returns if a number of tickets can be added
+     * @param number The number of tickets
+     * @return If a number of tickets can be added
+     */
+    public boolean canAdd_Ticket(int number)
+    {
+        if(getMAX_OCCUPANCY() >= current_occupancy + number)
+            return true;
+        else return false;
+    }
+
+    /**
+     * Returns a string version of screening room
+     * @return A string version of screening room
      */
     @Override
-    public String toString() {
-        return "Theater system:\n" + get_ScreeningRoom_Size();
-    }
-
-    /*FILE OPERATIONS*/
-
-    /**
-     * Loads system data from a .ser file
-     */
-    public static TheaterSystem load_system()
+    public String toString()
     {
-        return readFile.Read();
+        return String.format("ScreeningRoom\nMovie:\t%s\tMAX:\t%d\tCURRENT\t%d\n", getMovie_shown(),getMAX_OCCUPANCY(),getCurrent_occupancy());
     }
-
-    /**
-     * Saves theater system data to a .ser file
-     */
-    public static void save_system(TheaterSystem system)
-      {
-        writeFile.write(system);
-      }
-
-
-
 
 }
