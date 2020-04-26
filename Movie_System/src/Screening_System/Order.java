@@ -86,5 +86,4 @@ public class Order implements Serializable {
         returnString += String.format("TOTAL:\t$ %.2f",getPrice_total());
          return returnString;
     }
-
 }
