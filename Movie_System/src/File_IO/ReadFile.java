@@ -2,9 +2,10 @@ package File_IO;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import MovieTheater_System.TheaterSystem;
 
-import java.io.FileNotFoundException;
+import MovieTheater_System.StorageSystem;
+import MovieTheater_System.TheaterDay;
+
 import java.io.IOException;
 
 /**
@@ -21,14 +22,14 @@ public class ReadFile {
      * Reads in screening room data
      * @return A theater system
      */
-    public TheaterSystem Read()
+    public StorageSystem Read()
     {
-        TheaterSystem newTest = new TheaterSystem();
+        StorageSystem sys = new StorageSystem();
         try(ObjectInputStream OIS = new ObjectInputStream(new FileInputStream("MovSys.ser")))
         {
             try
             {
-                newTest = (TheaterSystem) OIS.readObject();
+                sys = (StorageSystem) OIS.readObject();
             }
             catch (ClassNotFoundException E)
             {
@@ -40,6 +41,6 @@ public class ReadFile {
             System.out.println(E.getMessage());
         }
 
-        return newTest;
+        return sys;
     }
 }
