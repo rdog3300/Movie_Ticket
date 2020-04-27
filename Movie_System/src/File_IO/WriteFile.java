@@ -1,6 +1,6 @@
 package File_IO;
 
-import MovieTheater_System.TheaterSystem;
+import MovieTheater_System.StorageSystem;
 
 import java.io.*;
 
@@ -17,7 +17,7 @@ public class WriteFile {
      * Writes theater system data to a .ser file
      * @param SYS The theater system to be saved
      */
-    public void write(TheaterSystem SYS)
+    public void write(StorageSystem SYS)
     {
         try(ObjectOutputStream OOS = new ObjectOutputStream(new FileOutputStream("MovSys.ser")))
         {
