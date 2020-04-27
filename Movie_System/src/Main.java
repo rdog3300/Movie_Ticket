@@ -9,138 +9,177 @@ import Screening_System.*;
 import Screening_System.Ticket;
 
 import MovieTheater_System.*;
+import Validation.RegEx;
 
 public class Main {
     public static void main(String [] args) {
         Scanner input = new Scanner(System.in);
-        TheaterSystem theater = new TheaterSystem();
+        StorageSystem sys = StorageSystem.load_system();
+        TheaterDay theater = sys.getCurrentDay();
         Order.NumOrders = theater.get_Order_Size();
 
-        int userEntry;
+        String userEntry;
+        System.out.println("MOVIE_SYSTEM");
+        sys.printPreviousDay();
         do {
-            System.out.println("MOVIE_SYSTEM");
+            sys.printCurrentDay();
             do {
-
                 System.out.println("\n1. Add Screening Room");
                 System.out.println("2. Add Ticket Order");
                 System.out.println("3. Remove Ticket Order");
                 System.out.println("4. Remove Screening Room");
                 System.out.println("5. Load Data");
                 System.out.println("6. Save Data");
-                System.out.println("7. Exit");
+                System.out.println("7. End Current Day");
+                System.out.println("8. Exit");
                 System.out.print("\nEnter choice: ");
-                userEntry = input.nextInt();
-                if (userEntry < 1 || userEntry > 7)
-                    System.out.println("\nINVALID ENTRY, Try again.\n");
-            } while (userEntry < 1 || userEntry > 7);
+                userEntry = input.next();
+                if(RegEx.isAlpha(userEntry))
+                    if (Integer.parseInt(userEntry) < 1 || Integer.parseInt(userEntry) > 8)
+                        System.out.println("\nINVALID ENTRY, Try again.\n");
+            } while (!RegEx.isAlpha(userEntry) || Integer.parseInt(userEntry) < 1 || Integer.parseInt(userEntry) > 8);
 
-            switch (userEntry) {
+            switch (Integer.parseInt(userEntry)) {
 
                 case 1: {
                     String temp;
-                    System.out.print("Enter MAX occupancy of screening room: ");
-                    ScreeningRoom tempRoom = new ScreeningRoom(input.nextInt(), "");
-                    System.out.println("Enter the name of the movie shown:");
-                    temp = input.nextLine();
-                    tempRoom.setMovie_shown(SingleString(input.nextLine()));
-                    System.out.println(tempRoom);
-                        System.out.print("Ready to add? (Y/N): ");
-                        if (input.next().toUpperCase().charAt(0) == 'Y')
-                            theater.add_ScreeningRoom(tempRoom);
-
+                    ScreeningRoom tempRoom = new ScreeningRoom();
+                    do
+                    {
+                        System.out.print("Enter MAX occupancy of screening room: ");
+                        temp = input.next();
+                        if(RegEx.isAlpha(temp))
+                            tempRoom = new ScreeningRoom(Integer.parseInt(temp),"");
+                    }while(!RegEx.isAlpha(temp));
+                    do {
+                        System.out.println("Enter the name of the movie shown:");
+                        input.nextLine();
+                        temp = input.nextLine();
+                        if(RegEx.isMovie(temp))
+                        {
+                            tempRoom.setMovie_shown(SingleString(temp));
+                            do
+                            {
+                                System.out.println(tempRoom);
+                                System.out.print("Ready to add? (Y/N): ");
+                                temp = input.next();
+                                temp.trim();
+                                if(RegEx.isYesNo(temp))
+                                {
+                                    if(temp.toUpperCase().charAt(0) == 'Y')
+                                        sys.add_ScreeningRoom(tempRoom);
+                                }
+                            }while(!RegEx.isYesNo(temp));
+                            break;
+                        }
+                    }while(!RegEx.isMovie(temp));
                     break;
                 }
                 case 2: {
-                    String temp = "";
-                    int num, entry;
+                    String entry, numTicks = "";
                     Order tempOrder = new Order();
-                    if(!theater.Screens_empty())
+                    if(!sys.Screens_empty())
                     {
-                        System.out.println("Enter number of tickets: ");
-                        num = input.nextInt();
                         do {
+                            System.out.print("Enter number of tickets: ");
+                            numTicks = input.next();
+                        }while(!RegEx.isAlpha(numTicks));
+
+
                             System.out.println("Choose the movie showing:");
-                            System.out.println(theater.getMovies());
-                            System.out.print("Enter choice: ");
-                            entry = input.nextInt();
-                            if (entry < 1 || entry > theater.get_ScreeningRoom_Size())
-                                System.out.println("Invalid Entry\n");
-                        } while (entry < 1 || entry > theater.get_ScreeningRoom_Size());
-                        ScreeningRoom tempScreen = theater.get_ScreeningRoom(entry - 1);
+                            System.out.println(sys.getMovies());
+                            do
+                            {
+                                System.out.print("Enter choice: ");
+                                entry = input.next();
+                                if (RegEx.isAlpha(entry)) {
+                                    if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size())
+                                        System.out.println("Invalid Entry. Try again");
+                                    else
+                                        break;
+                                }
+                            }while(!RegEx.isAlpha(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size());
+                        ScreeningRoom tempScreen = sys.get_ScreeningRoom(Integer.parseInt(entry) - 1);
                         if (tempScreen.isFull())
                             System.out.println("Room is full! Can't add any more Tickets\n");
-                        else if (!tempScreen.canAdd_Ticket(num))
+                        else if (!tempScreen.canAdd_Ticket(Integer.parseInt(numTicks)))
                         {
-                            System.out.println("Room can't add " + num + " more Tickets\n");
+                            System.out.println("Room can't add " + numTicks + " more Tickets\n");
                             Order.NumOrders--;
                         }
                         else
                         {
-                            for (int i = 0; i < num; i++) {
+                            for (int i = 0; i < Integer.parseInt(numTicks); i++) {
                                 Ticket tempTicket = new Ticket();
                                 do {
                                     System.out.println("Choose a ticket type\n1. Adult\n2. Senior\n3. Teen\n4. Child\n");
                                     System.out.print("Enter a choice: ");
-                                    entry = input.nextInt();
-                                    if (entry < 1 || entry > 4)
-                                        System.out.println("Choice not available\n");
-                                } while (entry < 1 || entry > 4);
-                                switch (entry) {
+                                    entry = input.next();
+                                    if(RegEx.isAlpha(entry)) {
+                                        if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 4)
+                                            System.out.println("Choice not available\n");
+                                    }
+                                } while (!RegEx.isAlpha(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 4 );
+                                switch (Integer.parseInt(entry)) {
                                     case 1: {
-                                        tempTicket = new Ticket(temp, 17);
+                                        tempTicket = new Ticket(tempScreen.getMovie_shown(), 17);
                                         break;
                                     }
                                     case 2: {
-                                        tempTicket = new Ticket(temp, 59);
+                                        tempTicket = new Ticket(tempScreen.getMovie_shown(), 59);
                                         break;
                                     }
                                     case 3: {
-                                        tempTicket = new Ticket(temp, 13);
+                                        tempTicket = new Ticket(tempScreen.getMovie_shown(), 13);
                                         break;
                                     }
                                     case 4: {
-                                        tempTicket = new Ticket(temp, 1);
+                                        tempTicket = new Ticket(tempScreen.getMovie_shown(), 1);
                                         break;
                                     }
                                 }
                                 tempOrder.addTicket(tempTicket);
                             }
 
-                        tempOrder.setPrice_total();
-                        System.out.println(tempOrder);
-                        do {
-                            System.out.print("\nConfirm placing " + tempOrder.getOrderName() + " (Y/N): ");
-                            temp = input.next();
-                            if(temp.toUpperCase().charAt(0) != 'Y' && temp.toUpperCase().charAt(0) != 'N')
-                                System.out.println("Invalid input\n");
-                        }while(temp.toUpperCase().charAt(0) != 'Y' && temp.toUpperCase().charAt(0) != 'N');
-                        if(temp.toUpperCase().charAt(0) == 'Y')
-                        {
-                            theater.add_Order(tempOrder);
-                            tempScreen.add_Ticket(tempOrder);
-                        }
+                            tempOrder.setPrice_total();
+                            System.out.println(tempOrder);
+                            do {
+                                System.out.print("\nConfirm placing " + tempOrder.getOrderName() + " (Y/N): ");
+                                entry = input.next();
+                                entry.trim();
+                            }while(!RegEx.isYesNo(entry));
+                            if(entry.toUpperCase().charAt(0) == 'Y')
+                            {
+                                theater.add_Order(tempOrder);
+                                tempScreen.add_Ticket(tempOrder);
+                                System.out.println(tempOrder.getOrderName() + " added successfully");
+                            }
                         }
                     }
                     else
-                System.out.println("No Available Screening Rooms\n");
+                        System.out.println("No Available Screening Rooms\n");
                     break;
                 }
 
                 case 3:
                 {
-                    int entry = 0;
-                    String temp;
+                    String entry = "";
                     if(!theater.Orders_empty()) {
                         do {
                             theater.printOrders();
                             System.out.print("\nEnter the order number you would like to cancel: Order_");
-                            entry = input.nextInt();
-                            if (entry < 1 || entry > theater.get_Order_Size())
-                                System.out.println("Invalid Entry, Number out of range. Try again.\n");
-                        } while (entry < 1 || entry > theater.get_Order_Size());
-                        temp = "Order_" + entry;
-                        System.out.println(theater.getOrder(entry - 1).getOrderName() + " was successfully removed\n");
-                        theater.remove_Order_Screen(theater.getOrder(temp));
+                            entry = input.next();
+                            if(RegEx.isAlpha(entry))
+                            {
+                                if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > theater.get_Order_Size())
+                                    System.out.println("Invalid Entry, Number out of range. Try again.\n");
+                            }
+
+
+                        } while (!RegEx.isAlpha(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > theater.get_Order_Size());
+                        entry = "Order_" + entry;
+                        System.out.println(theater.getOrder(Integer.parseInt(entry.substring(entry.length() - 1)) - 1).getOrderName() + " was successfully removed\n");
+                        sys.remove_Order_Screen(theater.getOrder(entry));
                     }
                     else
                         System.out.println("No Available Ticket Orders\n");
@@ -148,14 +187,21 @@ public class Main {
                 }
                 case 4:
                 {
-                    int entry;
-                    if(!theater.Screens_empty())
+                    String entry;
+                    if(!sys.Screens_empty())
                     {
-                        theater.printScreeeningRooms();
-                        System.out.print("Enter the choice of screening room to remove: ");
-                        entry = input.nextInt();
+                        do
+                        {
+                            sys.printScreeningRooms();
+                            System.out.print("Enter the choice of screening room to remove: ");
+                            entry = input.next();
+                            if(RegEx.isAlpha(entry))
+                                if(Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size())
+                                    System.out.println("Invalid Entry, Number out of range. Try again.\n");
+                        }while(!RegEx.isAlpha(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size());
+
                         System.out.println("ScreeningRoom " + entry + " successfully removed\n");
-                        theater.remove_ScreeningRoom(theater.get_ScreeningRoom(entry));
+                        sys.remove_ScreeningRoom(sys.get_ScreeningRoom(Integer.parseInt(entry) - 1));
                     }
                     else
                         System.out.println("No Available Screening Rooms\n");
@@ -164,20 +210,26 @@ public class Main {
                 case 5:
                 {
                     System.out.println("Loading Data......");
-                    theater = TheaterSystem.load_system();
+                    sys = StorageSystem.load_system();
                     System.out.println("Load successful");
                     break;
                 }
                 case 6:
                 {
                     System.out.println("Saving Data......");
-                    TheaterSystem.save_system(theater);
+                    StorageSystem.save_system(sys);
                     break;
                 }
                 case 7:
                 {
+                    sys.end_CurrentDay(theater);
+                    break;
+                }
+                case 8:
+                {
                     System.out.println("Saving Data......");
-                    TheaterSystem.save_system(theater);
+                    sys.addTheaterDay(theater);
+                    StorageSystem.save_system(sys);
                     System.out.println("\tEXITING.....");
                     System.exit(0);
                 }
@@ -194,7 +246,8 @@ public class Main {
     {
         S = S.toUpperCase();
         char Chars[] = S.toCharArray();
-        for(int i = 0; i < Chars.length; i++) {
+        for(int i = 0; i < Chars.length; i++)
+        {
             if ((int)Chars[i] == 32)
                 Chars[i] = '_';
         }
