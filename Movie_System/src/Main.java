@@ -6,6 +6,10 @@
 
 import java.util.Scanner;
 import Screening_System.*;
+import Screening_System.Room_Types.LRG_Room;
+import Screening_System.Room_Types.PRV_Room;
+import Screening_System.Room_Types.SML_Room;
+import Screening_System.Room_Types.STD_Room;
 import Screening_System.Ticket;
 
 import MovieTheater_System.*;
@@ -34,10 +38,10 @@ public class Main {
                 System.out.println("8. Exit");
                 System.out.print("\nEnter choice: ");
                 userEntry = input.next();
-                if(RegEx.isAlpha(userEntry))
+                if(RegEx.isDigit(userEntry))
                     if (Integer.parseInt(userEntry) < 1 || Integer.parseInt(userEntry) > 8)
                         System.out.println("\nINVALID ENTRY, Try again.\n");
-            } while (!RegEx.isAlpha(userEntry) || Integer.parseInt(userEntry) < 1 || Integer.parseInt(userEntry) > 8);
+            } while (!RegEx.isDigit(userEntry) || Integer.parseInt(userEntry) < 1 || Integer.parseInt(userEntry) > 8);
 
             switch (Integer.parseInt(userEntry)) {
 
@@ -46,18 +50,78 @@ public class Main {
                     ScreeningRoom tempRoom = new ScreeningRoom();
                     do
                     {
-                        System.out.print("Enter MAX occupancy of screening room: ");
+                        System.out.print("Choose a room size\n\t1. Large room (100)\n\t2. Standard room (50)\n\t3. Small room (25)\n\t4. Private room (10)\n");
                         temp = input.next();
-                        if(RegEx.isAlpha(temp))
-                            tempRoom = new ScreeningRoom(Integer.parseInt(temp),"");
-                    }while(!RegEx.isAlpha(temp));
+                        if(RegEx.isDigit(temp)) {
+                            if (Integer.parseInt(temp) < 1 || Integer.parseInt(temp) > 4)
+                                System.out.println("Invalid Entry, Try again.\n");
+                            else
+                            {
+                                switch (Integer.parseInt(temp))
+                                {
+                                    case 1:
+                                    {
+                                        tempRoom = new LRG_Room("",0);
+                                        break;
+                                    }
+                                    case 2:
+                                    {
+                                        tempRoom = new STD_Room("",0);
+                                        break;
+                                    }
+                                    case 3:
+                                    {
+                                        tempRoom = new SML_Room("",0);
+                                        break;
+                                    }
+                                    case 4:
+                                    {
+                                        tempRoom = new PRV_Room("",0);
+                                       break;
+                                    }
+                                }
+                            }
+                        }
+
+                    }while(!RegEx.isDigit(temp) || Integer.parseInt(temp) < 1 || Integer.parseInt(temp) > 4);
                     do {
                         System.out.println("Enter the name of the movie shown:");
                         input.nextLine();
                         temp = input.nextLine();
                         if(RegEx.isMovie(temp))
                         {
-                            tempRoom.setMovie_shown(SingleString(temp));
+                            tempRoom.setMovie_shown(RegEx.set_to_Movie(temp));
+                            do
+                            {
+                                System.out.println("Choose movie type\n\t1. Adult\n\t2. Teen\n\t3. Child\n");
+                                System.out.print("Enter choice: ");
+                                temp = input.next();
+                                if(RegEx.isDigit(temp))
+                                    if(Integer.parseInt(temp) < 1 || Integer.parseInt(temp) > 3)
+                                        System.out.println("Invalid entry, try again.\n");
+                                    else
+                                    {
+                                        switch (Integer.parseInt(temp))
+                                        {
+                                            case 1:
+                                            {
+                                                tempRoom.setMovieAge(18);
+                                                break;
+                                            }
+                                            case 2:
+                                            {
+                                                tempRoom.setMovieAge(13);
+                                                break;
+                                            }
+                                            case 3:
+                                            {
+                                                tempRoom.setMovieAge(0);
+                                                break;
+                                            }
+
+                                        }
+                                    }
+                            }while(!RegEx.isDigit(temp) || Integer.parseInt(temp) < 1 || Integer.parseInt(temp) > 3);
                             do
                             {
                                 System.out.println(tempRoom);
@@ -83,7 +147,7 @@ public class Main {
                         do {
                             System.out.print("Enter number of tickets: ");
                             numTicks = input.next();
-                        }while(!RegEx.isAlpha(numTicks));
+                        }while(!RegEx.isDigit(numTicks));
 
 
                             System.out.println("Choose the movie showing:");
@@ -92,13 +156,13 @@ public class Main {
                             {
                                 System.out.print("Enter choice: ");
                                 entry = input.next();
-                                if (RegEx.isAlpha(entry)) {
+                                if (RegEx.isDigit(entry)) {
                                     if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size())
                                         System.out.println("Invalid Entry. Try again");
                                     else
                                         break;
                                 }
-                            }while(!RegEx.isAlpha(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size());
+                            }while(!RegEx.isDigit(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size());
                         ScreeningRoom tempScreen = sys.get_ScreeningRoom(Integer.parseInt(entry) - 1);
                         if (tempScreen.isFull())
                             System.out.println("Room is full! Can't add any more Tickets\n");
@@ -111,33 +175,37 @@ public class Main {
                         {
                             for (int i = 0; i < Integer.parseInt(numTicks); i++) {
                                 Ticket tempTicket = new Ticket();
-                                do {
-                                    System.out.println("Choose a ticket type\n1. Adult\n2. Senior\n3. Teen\n4. Child\n");
-                                    System.out.print("Enter a choice: ");
-                                    entry = input.next();
-                                    if(RegEx.isAlpha(entry)) {
-                                        if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 4)
-                                            System.out.println("Choice not available\n");
+                                do
+                                {
+                                    do {
+                                        System.out.println("Choose a ticket type\n1. Adult\n2. Senior\n3. Teen\n4. Child\n");
+                                        System.out.print("Enter a choice: ");
+                                        entry = input.next();
+                                        if(RegEx.isDigit(entry)) {
+                                            if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 4)
+                                                System.out.println("Choice not available\n");
+                                        }
+                                    } while (!RegEx.isDigit(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 4 );
+                                    switch (Integer.parseInt(entry)) {
+                                        case 1: {
+                                            tempTicket = new Ticket(tempScreen.getMovie_shown(), 17);
+                                            break;
+                                        }
+                                        case 2: {
+                                            tempTicket = new Ticket(tempScreen.getMovie_shown(), 59);
+                                            break;
+                                        }
+                                        case 3: {
+                                            tempTicket = new Ticket(tempScreen.getMovie_shown(), 13);
+                                            break;
+                                        }
+                                        case 4: {
+                                            tempTicket = new Ticket(tempScreen.getMovie_shown(), 1);
+                                            break;
+                                        }
                                     }
-                                } while (!RegEx.isAlpha(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 4 );
-                                switch (Integer.parseInt(entry)) {
-                                    case 1: {
-                                        tempTicket = new Ticket(tempScreen.getMovie_shown(), 17);
-                                        break;
-                                    }
-                                    case 2: {
-                                        tempTicket = new Ticket(tempScreen.getMovie_shown(), 59);
-                                        break;
-                                    }
-                                    case 3: {
-                                        tempTicket = new Ticket(tempScreen.getMovie_shown(), 13);
-                                        break;
-                                    }
-                                    case 4: {
-                                        tempTicket = new Ticket(tempScreen.getMovie_shown(), 1);
-                                        break;
-                                    }
-                                }
+                                }while(!tempScreen.canAdd_Ticket(tempTicket));
+
                                 tempOrder.addTicket(tempTicket);
                             }
 
@@ -169,14 +237,14 @@ public class Main {
                             theater.printOrders();
                             System.out.print("\nEnter the order number you would like to cancel: Order_");
                             entry = input.next();
-                            if(RegEx.isAlpha(entry))
+                            if(RegEx.isDigit(entry))
                             {
                                 if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > theater.get_Order_Size())
                                     System.out.println("Invalid Entry, Number out of range. Try again.\n");
                             }
 
 
-                        } while (!RegEx.isAlpha(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > theater.get_Order_Size());
+                        } while (!RegEx.isDigit(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > theater.get_Order_Size());
                         entry = "Order_" + entry;
                         System.out.println(theater.getOrder(Integer.parseInt(entry.substring(entry.length() - 1)) - 1).getOrderName() + " was successfully removed\n");
                         sys.remove_Order_Screen(theater.getOrder(entry));
@@ -195,10 +263,10 @@ public class Main {
                             sys.printScreeningRooms();
                             System.out.print("Enter the choice of screening room to remove: ");
                             entry = input.next();
-                            if(RegEx.isAlpha(entry))
+                            if(RegEx.isDigit(entry))
                                 if(Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size())
                                     System.out.println("Invalid Entry, Number out of range. Try again.\n");
-                        }while(!RegEx.isAlpha(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size());
+                        }while(!RegEx.isDigit(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size());
 
                         System.out.println("ScreeningRoom " + entry + " successfully removed\n");
                         sys.remove_ScreeningRoom(sys.get_ScreeningRoom(Integer.parseInt(entry) - 1));
@@ -235,24 +303,6 @@ public class Main {
                 }
             }
         }while(true);
-    }
-
-    /**
-     * Changes string to not accept space characters
-     * @param S The string to change
-     * @return The changed string
-     */
-    public static String SingleString(String S)
-    {
-        S = S.toUpperCase();
-        char Chars[] = S.toCharArray();
-        for(int i = 0; i < Chars.length; i++)
-        {
-            if ((int)Chars[i] == 32)
-                Chars[i] = '_';
-        }
-        S = new String(Chars);
-        return S;
     }
 }
 
