@@ -5,8 +5,12 @@ package Validation;
  * @author Ryan Kruszewski
  */
 public class RegEx {
-
-    static public boolean isAlpha(String input)
+    /**
+     * Checks if input is a digit
+     * @param input The input string
+     * @return If the input is a digit
+     */
+    static public boolean isDigit(String input)
     {
         if(input.matches("[0-9]+"))
             return true;
@@ -17,6 +21,11 @@ public class RegEx {
         }
     }
 
+    /**
+     * Checks if input is in Movie format
+     * @param input The input string
+     * @return If the input is in Movie format
+     */
     static public boolean isMovie(String input)
     {
         if(input.matches("[ a-zA-Z1-9:', ]+"))
@@ -28,6 +37,11 @@ public class RegEx {
         }
     }
 
+    /**
+     * Sets input to Movie tile string
+     * @param input The input string
+     * @return The Movie title format string
+     */
     static public String set_to_Movie(String input)
     {
             input = input.toUpperCase();
@@ -41,6 +55,11 @@ public class RegEx {
             return input;
     }
 
+    /**
+     * Checks if the input is in yes / no format
+     * @param input The input string
+     * @return If the input is in yes / no format
+     */
     static public boolean isYesNo(String input)
     {
         if(input.matches("[yYnN]{1}"))
@@ -51,5 +70,4 @@ public class RegEx {
             return false;
         }
     }
-
 }
