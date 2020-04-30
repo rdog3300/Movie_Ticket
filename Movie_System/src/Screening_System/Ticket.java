@@ -11,7 +11,7 @@ public class Ticket implements Serializable
 {
     /*ATTRIBUTES*/
     private double price;
-    private Age_Groups type;
+    Age_Groups type;
     private String movie_name;
 
 
