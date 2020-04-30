@@ -1,7 +1,8 @@
 package Screening_System;
+
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+
 /**
  * ScreeningRoom Class
  * Holds information about each movie theater screening room
@@ -13,7 +14,8 @@ public class ScreeningRoom implements Serializable
     private String movie_shown;
     private final int MAX_OCCUPANCY;
     private int current_occupancy;
-    ArrayList<Ticket> Tickets = new ArrayList<>(); //maybe??
+    Age_Groups MovieAge;
+    ArrayList<Ticket> Tickets = new ArrayList<>();
 
     /*CONSTRUCTORS*/
 
@@ -31,11 +33,12 @@ public class ScreeningRoom implements Serializable
      * @param MAX The maximum occupancy
      * @param movie_shown the name of the movie being shown
      */
-    public ScreeningRoom(int MAX, String movie_shown)
+    public ScreeningRoom(int MAX, String movie_shown,int age_limit)
     {
         MAX_OCCUPANCY = MAX;
         setCurrent_occupancy(0);
         setMovie_shown(movie_shown);
+        setMovieAge(age_limit);
     }
 
     /*METHODS*/
@@ -52,6 +55,20 @@ public class ScreeningRoom implements Serializable
      * @param current The current occupancy
      */
     private void setCurrent_occupancy(int current){this.current_occupancy = current;}
+
+    /**
+     * Sets the age group limit for the movie
+     * @param age_limit The age limit for the movie
+     */
+    public void setMovieAge(int age_limit)
+    {
+        if(age_limit >= Age_Groups.ADULT.min)
+            MovieAge = Age_Groups.ADULT;
+        else if(age_limit >= Age_Groups.TEEN.min)
+            MovieAge = Age_Groups.TEEN;
+        else
+            MovieAge = Age_Groups.CHILD;
+    }
 
     //getters
 
@@ -72,6 +89,28 @@ public class ScreeningRoom implements Serializable
      * @return The name of the movie shown
      */
     public String getMovie_shown (){return this.movie_shown;}
+
+    /**
+     * Returns the age group of the movie
+     * @return The age group of the movie
+     */
+    private Age_Groups getMovieAge(){ return this.MovieAge; }
+
+    /**
+     * Returns the content rating of the movie
+     * @return The content rating of the movie
+     */
+    public String getMovie_Rating()
+    {
+        if(MovieAge == Age_Groups.ADULT)
+            return "R";
+        else if(MovieAge == Age_Groups.TEEN)
+            return "PG-13";
+        else
+            return "PG";
+    }
+
+
 
     //Other functions
 
@@ -154,11 +193,15 @@ public class ScreeningRoom implements Serializable
     {
         if(!isFull())
         {
-            add_Ticket(T);
-            return true;
+            if(T.type.min >= this.MovieAge.min) {
+                return true;
+            }
+            else
+            {
+                System.out.println("Can't add " + T.getType() + " ticket to a " + getMovie_Rating() + " movie");
+            }
         }
-        else
-            return false;
+        return false;
     }
 
     /**
@@ -180,7 +223,7 @@ public class ScreeningRoom implements Serializable
     @Override
     public String toString()
     {
-        return String.format("ScreeningRoom\nMovie:\t%s\tMAX:\t%d\tCURRENT\t%d\n", getMovie_shown(),getMAX_OCCUPANCY(),getCurrent_occupancy());
+        return String.format("ScreeningRoom\nMovie:\t%s\tMAX:\t%d\tCURRENT:\t%d\tRATING:\t%s\n", getMovie_shown(),getMAX_OCCUPANCY(),getCurrent_occupancy(),getMovie_Rating());
     }
 
 }
