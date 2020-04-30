@@ -1,7 +1,7 @@
 package MovieTheater_System;
 
 import Screening_System.*;
-//import Concessions.*;
+import Concessions_System.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +15,7 @@ import java.util.Date;
 public class TheaterDay implements Serializable {
     /*ATTRIBUTES*/
     ArrayList<Order> Orders = new ArrayList<>();
+    ArrayList<Concessions> concessions = new ArrayList<>();
     Date theaterDate = new Date();
     double totalSales = 0, ticketSales = 0, concessionSales = 0;
 
@@ -30,6 +31,11 @@ public class TheaterDay implements Serializable {
     }
 
     /**
+     * Sets the total sales of concessions
+     */
+    void addConcessionSale(double d) { concessionSales += d; }
+
+    /**
      * Sets the total day's sales
      */
     void setTotalSales()
@@ -41,7 +47,7 @@ public class TheaterDay implements Serializable {
      * Returns the total sales of the day
      * @return The total sales of the day
      */
-    public double getTotalSales() { return totalSales; }
+    public double getTotalSales() { return totalSales = (ticketSales + concessionSales); }
 
     /**
      * Returns the ticket sales of the day
@@ -81,11 +87,28 @@ public class TheaterDay implements Serializable {
     }
 
     /**
+     * Adds a concession sale to the list of cncessions
+     * @param C Concessions
+     */
+    public void add_Concession(Concessions C)
+    {
+        concessions.add(C);
+        addConcessionSale(C.getPrice_total());
+    }
+
+    /**
      * Returns the order from a certain index
      * @param index The index of the order
      * @return An order from an index
      */
     public Order getOrder(int index) { return this.Orders.get(index);}
+
+    /**
+     * Returns the order from a certain index
+     * @param index The index of the order
+     * @return An order from an index
+     */
+    public Concessions getConcession(int index){return this.concessions.get(index);}
 
     /**
      * Returns an order based on the order name
