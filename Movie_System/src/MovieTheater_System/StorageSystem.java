@@ -3,6 +3,10 @@ package MovieTheater_System;
 import File_IO.ReadFile;
 import File_IO.WriteFile;
 import Screening_System.Order;
+import Screening_System.Room_Types.LRG_Room;
+import Screening_System.Room_Types.PRV_Room;
+import Screening_System.Room_Types.SML_Room;
+import Screening_System.Room_Types.STD_Room;
 import Screening_System.ScreeningRoom;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,12 +35,12 @@ public class StorageSystem implements Serializable {
             previousDay = PastDays.get(PastDays.size() - 1);
         else
             previousDay = new TheaterDay();
-        add_ScreeningRoom(new ScreeningRoom(25,"AVENGERS_ENDGAME"));
-        add_ScreeningRoom(new ScreeningRoom(25,"ONWARD"));
-        add_ScreeningRoom(new ScreeningRoom(25,"STARWARS_REVENGE_OF_THE_SITH"));
-        add_ScreeningRoom(new ScreeningRoom(25,"SONIC_THE_HEDGEHOG"));
-        add_ScreeningRoom(new ScreeningRoom(25,"FAST_AND_FURIOUS_9"));
-        add_ScreeningRoom(new ScreeningRoom(25,"SPIDERMAN_FAR_FROM_HOME"));
+        add_ScreeningRoom(new STD_Room("AVENGERS_ENDGAME",13));
+        add_ScreeningRoom(new STD_Room("ONWARD",0));
+        add_ScreeningRoom(new LRG_Room("STARWARS_REVENGE_OF_THE_SITH",13));
+        add_ScreeningRoom(new LRG_Room("SONIC_THE_HEDGEHOG",0));
+        add_ScreeningRoom(new SML_Room("FAST_AND_FURIOUS_9",13));
+        add_ScreeningRoom(new PRV_Room("SPIDERMAN_FAR_FROM_HOME",13));
     }
 
     /*METHODS*/
@@ -124,13 +128,12 @@ public class StorageSystem implements Serializable {
      */
     public void remove_ScreeningRoom(ScreeningRoom S)
     {
-        for(Order O : currentDay.Orders)
-        {
-            if (S.Contains_Tickets(O))
-            {
-                S.remove_Ticket(O);
-                currentDay.remove_Order(O);
-            }
+        for (int i = 0; i < this.PastDays.size(); i++) {
+            for (int j = 0; j < PastDays.get(i).Orders.size(); j++)
+                if (S.Contains_Tickets(PastDays.get(i).getOrder(j))) {
+                    S.remove_Ticket(PastDays.get(i).getOrder(j));
+                    PastDays.get(i).remove_Order(PastDays.get(i).getOrder(j));
+                }
         }
         ScreeningRooms.remove(S);
     }
@@ -149,6 +152,10 @@ public class StorageSystem implements Serializable {
         currentDay.remove_Order(O);
     }
 
+    /**
+     * Ends current day of theater sales
+     * @param T The current theater day
+     */
     public void end_CurrentDay(TheaterDay T)
     {
         T.setTotalSales();
@@ -157,7 +164,6 @@ public class StorageSystem implements Serializable {
         previousDay = T;
         currentDay = new TheaterDay();
     }
-
 
     /**
      * Returns a string version of the system
@@ -191,6 +197,4 @@ public class StorageSystem implements Serializable {
     {
         writeFile.write(system);
     }
-
-
 }
