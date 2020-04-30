@@ -12,6 +12,11 @@ import Screening_System.Room_Types.SML_Room;
 import Screening_System.Room_Types.STD_Room;
 import Screening_System.Ticket;
 
+import Concessions_System.*;
+import Concessions_System.Popcorn;
+import Concessions_System.Snacks;
+import Concessions_System.Drinks;
+
 import MovieTheater_System.*;
 import Validation.RegEx;
 
@@ -31,17 +36,18 @@ public class Main {
                 System.out.println("\n1. Add Screening Room");
                 System.out.println("2. Add Ticket Order");
                 System.out.println("3. Remove Ticket Order");
-                System.out.println("4. Remove Screening Room");
-                System.out.println("5. Load Data");
-                System.out.println("6. Save Data");
-                System.out.println("7. End Current Day");
-                System.out.println("8. Exit");
+                System.out.println("4. Buy Concessions");
+                System.out.println("5. Remove Screening Room");
+                System.out.println("6. Load Data");
+                System.out.println("7. Save Data");
+                System.out.println("8. End Current Day");
+                System.out.println("9. Exit");
                 System.out.print("\nEnter choice: ");
                 userEntry = input.next();
                 if(RegEx.isDigit(userEntry))
-                    if (Integer.parseInt(userEntry) < 1 || Integer.parseInt(userEntry) > 8)
+                    if (Integer.parseInt(userEntry) < 1 || Integer.parseInt(userEntry) > 9)
                         System.out.println("\nINVALID ENTRY, Try again.\n");
-            } while (!RegEx.isDigit(userEntry) || Integer.parseInt(userEntry) < 1 || Integer.parseInt(userEntry) > 8);
+            } while (!RegEx.isDigit(userEntry) || Integer.parseInt(userEntry) < 1 || Integer.parseInt(userEntry) > 9);
 
             switch (Integer.parseInt(userEntry)) {
 
@@ -77,7 +83,7 @@ public class Main {
                                     case 4:
                                     {
                                         tempRoom = new PRV_Room("",0);
-                                       break;
+                                        break;
                                     }
                                 }
                             }
@@ -150,19 +156,19 @@ public class Main {
                         }while(!RegEx.isDigit(numTicks));
 
 
-                            System.out.println("Choose the movie showing:");
-                            System.out.println(sys.getMovies());
-                            do
-                            {
-                                System.out.print("Enter choice: ");
-                                entry = input.next();
-                                if (RegEx.isDigit(entry)) {
-                                    if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size())
-                                        System.out.println("Invalid Entry. Try again");
-                                    else
-                                        break;
-                                }
-                            }while(!RegEx.isDigit(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size());
+                        System.out.println("Choose the movie showing:");
+                        System.out.println(sys.getMovies());
+                        do
+                        {
+                            System.out.print("Enter choice: ");
+                            entry = input.next();
+                            if (RegEx.isDigit(entry)) {
+                                if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size())
+                                    System.out.println("Invalid Entry. Try again");
+                                else
+                                    break;
+                            }
+                        }while(!RegEx.isDigit(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > sys.get_ScreeningRoom_Size());
                         ScreeningRoom tempScreen = sys.get_ScreeningRoom(Integer.parseInt(entry) - 1);
                         if (tempScreen.isFull())
                             System.out.println("Room is full! Can't add any more Tickets\n");
@@ -256,6 +262,127 @@ public class Main {
                 case 4:
                 {
                     String entry;
+                    Concessions tempConcessions = new Concessions();
+                    System.out.println("\nPlease make a selection:\n1) Popcorn\n2) Candy\n3) Drinks");
+                    do{
+                        System.out.print("Enter choice: ");
+                        entry = input.next();
+                        if (RegEx.isDigit(entry)) {
+                            if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 3)
+                                System.out.println("Invalid Entry. Try again");
+                            else
+                                break;
+                        }
+                    }while(!RegEx.isDigit(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 3);
+                    if(entry.equals("1")) { //popcorn
+                        Popcorn tempPopcorn = new Popcorn();
+                        do { //choose popcorn size
+                            System.out.println("Select popcorn size:\n1) Small   $4.00\n2) Medium  $5.00\n3) Large   $6.00");
+                            System.out.print("Enter a choice: ");
+                            entry = input.next();
+                            if(RegEx.isDigit(entry)) {
+                                if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 3)
+                                    System.out.println("Choice not available\n");
+                            }
+                        } while (!RegEx.isDigit(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 3 );
+                        switch (Integer.parseInt(entry)) {
+                            case 1: {
+                                tempPopcorn = new Popcorn("SMALL",1);
+                                break;
+                            }
+                            case 2: {
+                                tempPopcorn = new Popcorn("MEDIUM", 2);
+                                break;
+                            }
+                            case 3: {
+                                tempPopcorn = new Popcorn("LARGE", 3);
+                                break;
+                            }
+                        }tempConcessions.addPopcorn(tempPopcorn);
+                    }else if(entry.equals("2")){
+                        Snacks tempSnacks = new Snacks();
+                        do { //choose Snacks
+                            System.out.println("Select candy:\n1) Milk Duds  $3.25\n2) Oreos      $3.50\n3) Skittles   $3.75");
+                            System.out.print("Enter a choice: ");
+                            entry = input.next();
+                            if(RegEx.isDigit(entry)) {
+                                if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 3)
+                                    System.out.println("Choice not available\n");
+                            }
+                        } while (!RegEx.isDigit(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 3 );
+                        switch (Integer.parseInt(entry)) {
+                            case 1: {
+                                tempSnacks = new Snacks("MILKDUDS",1);
+                                break;
+                            }
+                            case 2: {
+                                tempSnacks = new Snacks("OREOS", 2);
+                                break;
+                            }
+                            case 3: {
+                                tempSnacks = new Snacks("SKITTLES", 3);
+                                break;
+                            }
+                        }tempConcessions.addSnacks(tempSnacks);
+                    }else if(entry.equals("3")){
+                        Drinks tempDrinks = new Drinks();
+                        do { //choose Drinks
+                            System.out.println("Select drink:\n1) Water   $1.50\n2) Soda    (S/M/L)");
+                            System.out.print("Enter a choice: ");
+                            entry = input.next();
+                            if(RegEx.isDigit(entry)) {
+                                if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 2)
+                                    System.out.println("Choice not available\n");
+                            }
+                        }while (!RegEx.isDigit(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 2);
+                        switch (Integer.parseInt(entry)) {
+                            case 1: {
+                                tempDrinks = new Drinks("WATER",1);
+                                break;
+                            }
+                            case 2: {
+                                do { //choose drink size
+                                    System.out.println("Select drink size:\n1) Small   $2.50\n2) Medium  $3.00\n3) Large   $3.50");
+                                    System.out.print("Enter a choice: ");
+                                    entry = input.next();
+                                    if(RegEx.isDigit(entry)) {
+                                        if (Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 3)
+                                            System.out.println("Choice not available\n");
+                                    }
+                                } while (!RegEx.isDigit(entry) || Integer.parseInt(entry) < 1 || Integer.parseInt(entry) > 3 );
+                                switch (Integer.parseInt(entry)) {
+                                    case 1: {
+                                        tempDrinks = new Drinks("SMALL",2);
+                                        break;
+                                    }
+                                    case 2: {
+                                        tempDrinks = new Drinks("MEDIUM", 3);
+                                        break;
+                                    }
+                                    case 3: {
+                                        tempDrinks = new Drinks("LARGE", 4);
+                                        break;
+                                    }
+                                } break;
+                            }
+                        }tempConcessions.addDrinks(tempDrinks);
+                    }
+                    tempConcessions.setPrice_total();
+                    System.out.println(tempConcessions);
+                    do {
+                        System.out.print("\nConfirm placing " + tempConcessions.getConcessionName() + " (Y/N): ");
+                        entry = input.next();
+                        entry.trim();
+                    }while(!RegEx.isYesNo(entry));
+                    if(entry.toUpperCase().charAt(0) == 'Y')
+                    {
+                        theater.add_Concession(tempConcessions);
+                        System.out.println(tempConcessions.getConcessionName() + " added successfully");
+                    }break;
+                }
+                case 5:
+                {
+                    String entry;
                     if(!sys.Screens_empty())
                     {
                         do
@@ -275,25 +402,25 @@ public class Main {
                         System.out.println("No Available Screening Rooms\n");
                     break;
                 }
-                case 5:
+                case 6:
                 {
                     System.out.println("Loading Data......");
                     sys = StorageSystem.load_system();
                     System.out.println("Load successful");
                     break;
                 }
-                case 6:
+                case 7:
                 {
                     System.out.println("Saving Data......");
                     StorageSystem.save_system(sys);
                     break;
                 }
-                case 7:
+                case 8:
                 {
                     sys.end_CurrentDay(theater);
                     break;
                 }
-                case 8:
+                case 9:
                 {
                     System.out.println("Saving Data......");
                     sys.addTheaterDay(theater);
